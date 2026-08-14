@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>A Special Question ❤️</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
@@ -39,7 +39,6 @@
     // -------------------------------------------------------------
     // 1. COUNTDOWN TIMER CONFIGURATION
     // Set for August 15, 2026 at Midnight (00:00:00) Sri Lanka Time (+05:30)
-    // Using ISO 8601 string to ensure the timezone is strictly locked to Sri Lanka
     // -------------------------------------------------------------
     const TARGET_DATE = new Date("2026-08-14T00:00:00+05:30");
 
@@ -98,7 +97,6 @@
     // -------------------------------------------------------------
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // Cartoon "Boing" Synthesizer Sound
     function playBoingSound() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
 

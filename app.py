@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 
-app = Flask(__name__)
+# Configured Flask to look in current folder '.' for templates & static files
+app = Flask(__name__, template_folder='.', static_folder='.')
 
 @app.route('/')
 def home():

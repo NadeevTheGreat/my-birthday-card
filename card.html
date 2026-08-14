@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Happy Birthday Baby! 🎉❤️</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
@@ -23,9 +23,9 @@
   <!-- Fullscreen Modal Overlay -->
   <div id="cardModal" class="card-modal" onclick="closeModal()">
     <span class="close-modal" onclick="closeModal()">&times;</span>
-    <img class="modal-content" src="{{ url_for('static', filename='images/card.png') }}"
+    <img class="modal-content" src="{{ url_for('static', filename='card.png') }}"
          alt="Birthday Card Fullscreen"
-         onerror="this.src='{{ url_for('static', filename='images/card_placeholder.png') }}'">
+         onerror="this.src='{{ url_for('static', filename='card_placeholder.png') }}'">
   </div>
 
   <div class="container">
@@ -37,9 +37,9 @@
       <div class="envelope">
         <div class="card-inside" onclick="openModal(event)">
           <!-- Your PNG Birthday Card displays here -->
-          <img src="{{ url_for('static', filename='images/card.png') }}"
+          <img src="{{ url_for('static', filename='card.png') }}"
                alt="Birthday Card"
-               onerror="this.src='{{ url_for('static', filename='images/card_placeholder.png') }}'">
+               onerror="this.src='{{ url_for('static', filename='card_placeholder.png') }}'">
         </div>
         <div class="envelope-pocket"></div>
       </div>
@@ -78,7 +78,7 @@
     // -------------------------------------------------------------
     function playCheerChime() {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      const notes = [523.25, 659.25, 783.99, 1046.50];
 
       notes.forEach((freq, index) => {
         const osc = ctx.createOscillator();
@@ -106,23 +106,18 @@
       if (isEnvelopeOpened) return;
       isEnvelopeOpened = true;
 
-      // Play Chime
       playCheerChime();
 
-      // Autoplay music on open if not already playing
       if (!isPlaying) toggleMusic();
 
-      // Expand the main container layout
       document.querySelector('.container').classList.add('open-layout');
 
-      // Add CSS class to trigger 3D flap flip & card slide up/right
       document.getElementById('envelopeWrapper').classList.add('open');
 
       setTimeout(() => {
         document.getElementById('openedMessage').style.display = 'block';
       }, 800);
 
-      // Trigger Confetti Burst
       const duration = 3 * 1000;
       const end = Date.now() + duration;
 
@@ -137,8 +132,8 @@
     // 4. FULLSCREEN MODAL CONTROLS
     // -------------------------------------------------------------
     function openModal(event) {
-      if (event) event.stopPropagation(); // Stop opening logic triggering twice
-      if (!isEnvelopeOpened) return;      // Don't open fullscreen if envelope is closed
+      if (event) event.stopPropagation();
+      if (!isEnvelopeOpened) return;
       document.getElementById('cardModal').style.display = 'flex';
     }
 
@@ -163,7 +158,6 @@
 
     window.addEventListener('pointerdown', (e) => createHeartParticle(e.clientX, e.clientY));
 
-    // Background floating elements
     const bgContainer = document.getElementById('floating-bg');
     for(let i=0; i<12; i++) {
       let el = document.createElement('div');

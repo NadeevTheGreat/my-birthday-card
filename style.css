@@ -237,7 +237,6 @@ h1 {
 
 @media (max-width: 480px) {
   :root {
-    /* Scales down perfectly for narrow mobile screens */
     --env-width: 260px;
     --env-half: 130px;
     --env-height: 170px;
@@ -327,13 +326,11 @@ h1 {
 /* Desktop: Side-by-Side View */
 @media (min-width: 768px) {
   .envelope-wrapper.open {
-    /* Uses the dynamic variable to shift it perfectly left */
     transform: translateX(calc(var(--env-half) * -1));
   }
 
   .envelope-wrapper.open .card-inside {
     opacity: 1;
-    /* Uses dynamic math to position card beautifully right next to it */
     transform: translate(calc(var(--env-width) - 10px), 20px) scale(1.1);
     z-index: 10;
     cursor: pointer;
@@ -352,7 +349,6 @@ h1 {
 
   .envelope-wrapper.open .card-inside {
     opacity: 1;
-    /* Adjusted lower so it doesn't collide with the header text */
     transform: translateY(-90px) scale(1.05);
     z-index: 10;
     cursor: pointer;
