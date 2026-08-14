@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Baby! 🎉❤️</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+  <!-- Floating Music Toggle Button -->
+  <button class="music-toggle" id="musicBtn" onclick="toggleMusic()">
+    <span id="musicIcon">🎵</span> <span id="musicText">Play Music</span>
+  </button>
+
+  <!-- Background Music Audio Element -->
+  <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112199.mp3"></audio>
+
+  <!-- Floating Background Emojis -->
+  <div id="floating-bg"></div>
+
+  <!-- Fullscreen Modal Overlay -->
+  <div id="cardModal" class="card-modal" onclick="closeModal()">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    <img class="modal-content" src="{{ url_for('static', filename='images/card.png') }}"
+         alt="Birthday Card Fullscreen"
+         onerror="this.src='{{ url_for('static', filename='images/card_placeholder.png') }}'">
+  </div>
+
+  <div class="container">
+    <h1 style="color: #ff4757; font-size: 2.2rem; margin-bottom: 10px;">Happy Birthday! 🎂✨</h1>
+    <p style="color: #666; font-size: 0.95rem; margin-bottom: 15px;">You have a special card waiting inside! Tap the envelope to open it 💌</p>
+
+    <!-- 3D Envelope Component -->
+    <div class="envelope-wrapper" id="envelopeWrapper" onclick="openEnvelope()">
+      <div class="envelope">
+        <div class="card-inside" onclick="openModal(event)">
+          <!-- Your PNG Birthday Card displays here -->
+          <img src="{{ url_for('static', filename='images/card.png') }}"
+               alt="Birthday Card"
+               onerror="this.src='{{ url_for('static', filename='images/card_placeholder.png') }}'">
+        </div>
+        <div class="envelope-pocket"></div>
+      </div>
+    </div>
+
+    <div id="openedMessage" style="display: none; margin-top: 20px;">
+      <button class="btn-fullscreen" onclick="openModal()">🔍 View Full Screen</button>
+      <p class="subtitle" style="color: #d63384; font-weight: 700; font-size: 1.1rem; margin-top: 15px;">I knew you'd press Yes! 😉 Hope you love your card!</p>
+      <a href="{{ url_for('home') }}" style="color: #777; text-decoration: underline; font-size: 0.85rem; display: inline-block; margin-top: 15px;">Replay 🔁</a>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // 1. MUSIC PLAYER TOGGLE
+    // -------------------------------------------------------------
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    let isPlaying = false;
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        document.getElementById('musicIcon').innerText = '🎵';
+        document.getElementById('musicText').innerText = 'Play Music';
+      } else {
+        music.play();
+        document.getElementById('musicIcon').innerText = '⏸️';
+        document.getElementById('musicText').innerText = 'Pause Music';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    // -------------------------------------------------------------
+    // 2. CELEBRATORY CHIME SOUND EFFECT
+    // -------------------------------------------------------------
+    function playCheerChime() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+
+      notes.forEach((freq, index) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+
+        gain.gain.setValueAtTime(0.2, ctx.currentTime + index * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + index * 0.1 + 0.6);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime + index * 0.1);
+        osc.stop(ctx.currentTime + index * 0.1 + 0.6);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // 3. 3D ENVELOPE OPENING LOGIC & CONFETTI
+    // -------------------------------------------------------------
+    let isEnvelopeOpened = false;
+
+    function openEnvelope() {
+      if (isEnvelopeOpened) return;
+      isEnvelopeOpened = true;
+
+      // Play Chime
+      playCheerChime();
+
+      // Autoplay music on open if not already playing
+      if (!isPlaying) toggleMusic();
+
+      // Expand the main container layout
+      document.querySelector('.container').classList.add('open-layout');
+
+      // Add CSS class to trigger 3D flap flip & card slide up/right
+      document.getElementById('envelopeWrapper').classList.add('open');
+
+      setTimeout(() => {
+        document.getElementById('openedMessage').style.display = 'block';
+      }, 800);
+
+      // Trigger Confetti Burst
+      const duration = 3 * 1000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0 } });
+        confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 } });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    }
+
+    // -------------------------------------------------------------
+    // 4. FULLSCREEN MODAL CONTROLS
+    // -------------------------------------------------------------
+    function openModal(event) {
+      if (event) event.stopPropagation(); // Stop opening logic triggering twice
+      if (!isEnvelopeOpened) return;      // Don't open fullscreen if envelope is closed
+      document.getElementById('cardModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('cardModal').style.display = 'none';
+    }
+
+    // -------------------------------------------------------------
+    // 5. TOUCH & CLICK HEART TRAIL
+    // -------------------------------------------------------------
+    const trailEmojis = ['🎉', '✨', '💖', '🎂', '💕'];
+    function createHeartParticle(x, y) {
+      const particle = document.createElement('div');
+      particle.className = 'heart-particle';
+      particle.innerText = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
+      particle.style.left = x + 'px';
+      particle.style.top = y + 'px';
+      document.body.appendChild(particle);
+
+      setTimeout(() => particle.remove(), 1200);
+    }
+
+    window.addEventListener('pointerdown', (e) => createHeartParticle(e.clientX, e.clientY));
+
+    // Background floating elements
+    const bgContainer = document.getElementById('floating-bg');
+    for(let i=0; i<12; i++) {
+      let el = document.createElement('div');
+      el.innerText = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
+      el.className = 'bg-emoji';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (Math.random() * 6 + 6) + 's';
+      el.style.animationDelay = Math.random() * 5 + 's';
+      bgContainer.appendChild(el);
+    }
+  </script>
+</body>
+</html>

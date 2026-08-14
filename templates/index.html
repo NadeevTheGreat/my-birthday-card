@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Special Question ❤️</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Floating Background Emojis -->
+  <div id="floating-bg"></div>
+
+  <div class="container">
+
+    <!-- Countdown Timer Section -->
+    <div class="countdown-box" id="countdownBox">
+      <h3 style="color: #d63384; font-size: 1.1rem; margin-bottom: 5px;">🔒 Surprise Unlocks In:</h3>
+      <div class="timer-units">
+        <div class="timer-unit"><span class="timer-number" id="hours">00</span><span class="timer-label">Hours</span></div>
+        <div class="timer-unit"><span class="timer-number" id="minutes">00</span><span class="timer-label">Mins</span></div>
+        <div class="timer-unit"><span class="timer-number" id="seconds">00</span><span class="timer-label">Secs</span></div>
+      </div>
+      <p style="font-size: 0.8rem; color: #777; margin-top: 10px;">(Patience baby! Wait till midnight... 😉)</p>
+    </div>
+
+    <!-- Main Question Container -->
+    <div id="questionContent" style="display: none;">
+      <h1>Are you daddy's good gurl? 🥺❤️</h1>
+      <div class="btn-group">
+        <a href="{{ url_for('card') }}" class="btn btn-yes" id="yesBtn">Yes 🥰</a>
+        <button class="btn btn-no" id="noBtn" onclick="handleNoClick()">No 😜</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // 1. COUNTDOWN TIMER CONFIGURATION
+    // Set for August 15, 2026 at Midnight (00:00:00) Sri Lanka Time (+05:30)
+    // Using ISO 8601 string to ensure the timezone is strictly locked to Sri Lanka
+    // -------------------------------------------------------------
+    const TARGET_DATE = new Date("2026-08-14T00:00:00+05:30");
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = TARGET_DATE - now;
+
+      if (diff <= 0) {
+        document.getElementById('countdownBox').style.display = 'none';
+        document.getElementById('questionContent').style.display = 'block';
+        return;
+      }
+
+      const hours = Math.floor((diff / (1000 * 60 * 60)));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+      document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // -------------------------------------------------------------
+    // 2. TOUCH & CLICK HEART TRAIL
+    // -------------------------------------------------------------
+    const trailEmojis = ['💖', '✨', '💕', '🌸', '❤️'];
+    function createHeartParticle(x, y) {
+      const particle = document.createElement('div');
+      particle.className = 'heart-particle';
+      particle.innerText = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
+      particle.style.left = x + 'px';
+      particle.style.top = y + 'px';
+      document.body.appendChild(particle);
+
+      setTimeout(() => particle.remove(), 1200);
+    }
+
+    window.addEventListener('pointerdown', (e) => createHeartParticle(e.clientX, e.clientY));
+
+    // Background floating elements
+    const bgContainer = document.getElementById('floating-bg');
+    for(let i=0; i<12; i++) {
+      let el = document.createElement('div');
+      el.innerText = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
+      el.className = 'bg-emoji';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (Math.random() * 6 + 6) + 's';
+      el.style.animationDelay = Math.random() * 5 + 's';
+      bgContainer.appendChild(el);
+    }
+
+    // -------------------------------------------------------------
+    // 3. SOUND EFFECTS & BUTTON INTERACTION
+    // -------------------------------------------------------------
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Cartoon "Boing" Synthesizer Sound
+    function playBoingSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.3);
+
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
+    }
+
+    let yesScale = 1;
+    let clickCount = 0;
+    const noPhrases = [
+      "Are you sure? 🤨",
+      "Wrong answer! 😜",
+      "Think again! 👀",
+      "Nice try... 💅",
+      "You have no choice! 😂",
+      "Just click YES! ❤️",
+      "Still trying to click No? 🥺",
+      "Press YES already! 💖"
+    ];
+
+    function handleNoClick() {
+      playBoingSound();
+
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+
+      yesBtn.style.animation = 'none';
+      yesScale += 0.5;
+      yesBtn.style.transform = `scale(${yesScale})`;
+
+      noBtn.classList.remove('shake');
+      void noBtn.offsetWidth;
+      noBtn.classList.add('shake');
+
+      noBtn.innerText = noPhrases[clickCount % noPhrases.length];
+      clickCount++;
+
+      if (yesScale > 3.5) {
+        noBtn.style.transform = 'scale(0.8)';
+      }
+    }
+  </script>
+</body>
+</html>
