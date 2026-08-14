@@ -4,16 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>A Special Question ❤️</title>
-  <link rel="stylesheet" href="style.css">
+  <!-- Added ./ to force it to look in the same folder -->
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
-  <!-- Floating Background Emojis -->
   <div id="floating-bg"></div>
 
   <div class="container">
 
-    <!-- Countdown Timer Section -->
     <div class="countdown-box" id="countdownBox">
       <h3 style="color: #d63384; font-size: 1.1rem; margin-bottom: 5px;">🔒 Surprise Unlocks In:</h3>
       <div class="timer-units">
@@ -24,11 +23,11 @@
       <p style="font-size: 0.8rem; color: #777; margin-top: 10px;">(Patience baby! Wait till midnight... 😉)</p>
     </div>
 
-    <!-- Main Question Container -->
     <div id="questionContent" style="display: none;">
       <h1>Are you daddy's good gurl? 🥺❤️</h1>
       <div class="btn-group">
-        <a href="card.html" class="btn btn-yes" id="yesBtn">Yes 🥰</a>
+        <!-- Added ./ to ensure it finds card.html -->
+        <a href="./card.html" class="btn btn-yes" id="yesBtn">Yes 🥰</a>
         <button class="btn btn-no" id="noBtn" onclick="handleNoClick()">No 😜</button>
       </div>
     </div>
@@ -36,10 +35,6 @@
   </div>
 
   <script>
-    // -------------------------------------------------------------
-    // 1. COUNTDOWN TIMER CONFIGURATION
-    // Set for August 15, 2026 at Midnight (00:00:00) Sri Lanka Time (+05:30)
-    // -------------------------------------------------------------
     const TARGET_DATE = new Date("2026-08-14T00:00:00+05:30");
 
     function updateCountdown() {
@@ -63,9 +58,6 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // -------------------------------------------------------------
-    // 2. TOUCH & CLICK HEART TRAIL
-    // -------------------------------------------------------------
     const trailEmojis = ['💖', '✨', '💕', '🌸', '❤️'];
     function createHeartParticle(x, y) {
       const particle = document.createElement('div');
@@ -74,13 +66,11 @@
       particle.style.left = x + 'px';
       particle.style.top = y + 'px';
       document.body.appendChild(particle);
-
       setTimeout(() => particle.remove(), 1200);
     }
 
     window.addEventListener('pointerdown', (e) => createHeartParticle(e.clientX, e.clientY));
 
-    // Background floating elements
     const bgContainer = document.getElementById('floating-bg');
     for(let i=0; i<12; i++) {
       let el = document.createElement('div');
@@ -92,27 +82,19 @@
       bgContainer.appendChild(el);
     }
 
-    // -------------------------------------------------------------
-    // 3. SOUND EFFECTS & BUTTON INTERACTION
-    // -------------------------------------------------------------
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playBoingSound() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
-
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-
       osc.type = 'sine';
       osc.frequency.setValueAtTime(150, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.3);
-
       gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-
       osc.connect(gain);
       gain.connect(audioCtx.destination);
-
       osc.start();
       osc.stop(audioCtx.currentTime + 0.3);
     }
@@ -132,7 +114,6 @@
 
     function handleNoClick() {
       playBoingSound();
-
       const yesBtn = document.getElementById('yesBtn');
       const noBtn = document.getElementById('noBtn');
 
